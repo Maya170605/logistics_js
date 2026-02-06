@@ -1,0 +1,400 @@
+.rent-modal {
+  max-width: 500px;
+  width: 90%;
+}
+
+.rent-modal .modal-content {
+  background: var(--bg-card);
+  border-radius: 16px;
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(138, 43, 226, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: modalSlideUp 0.3s ease-out;
+}
+
+.rent-modal .modal-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, 
+    transparent, 
+    var(--accent-primary), 
+    transparent);
+}
+
+/* Vehicle Info - Информация о транспорте */
+.vehicle-info {
+  background: rgba(138, 43, 226, 0.1);
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  border: 1px solid rgba(138, 43, 226, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.vehicle-info-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(138, 43, 226, 0.2);
+}
+
+.vehicle-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, 
+    var(--accent-primary) 0%, 
+    var(--accent-secondary) 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 24px;
+}
+
+.vehicle-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.vehicle-info-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.vehicle-info-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+}
+
+.vehicle-info-label {
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  min-width: 120px;
+}
+
+.vehicle-info-value {
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.vehicle-info-value.highlight {
+  color: var(--accent-primary);
+  font-size: 16px;
+}
+
+/* Form Group - Группы формы */
+.rent-modal .form-group {
+  margin-bottom: 24px;
+}
+
+.rent-modal .form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rent-modal .form-group label::before {
+  content: '📅';
+  font-size: 16px;
+  opacity: 0.7;
+}
+
+.rent-modal .form-group input[type="number"],
+.rent-modal .form-group input[type="date"],
+.rent-modal .form-group input[type="text"],
+.rent-modal .form-group select {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--bg-input);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 15px;
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.rent-modal .form-group input[type="number"]:hover,
+.rent-modal .form-group input[type="date"]:hover,
+.rent-modal .form-group input[type="text"]:hover,
+.rent-modal .form-group select:hover {
+  border-color: rgba(138, 43, 226, 0.5);
+  background-color: rgba(138, 43, 226, 0.05);
+}
+
+.rent-modal .form-group input[type="number"]:focus,
+.rent-modal .form-group input[type="date"]:focus,
+.rent-modal .form-group input[type="text"]:focus,
+.rent-modal .form-group select:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  background-color: var(--bg-input);
+  box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.2);
+}
+
+/* Error States - Состояния ошибок */
+.rent-modal .form-group input.error {
+  border-color: #dc3545;
+  background-color: rgba(220, 53, 69, 0.1);
+}
+
+.rent-modal .error-message {
+  color: #dc3545;
+  font-size: 13px;
+  margin-top: 6px;
+  padding: 8px 12px;
+  background: rgba(220, 53, 69, 0.1);
+  border-radius: 6px;
+  border: 1px solid rgba(220, 53, 69, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rent-modal .error-message::before {
+  content: '⚠';
+  font-size: 14px;
+}
+
+.rent-modal .form-group small {
+  display: block;
+  margin-top: 6px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.4;
+  opacity: 0.8;
+}
+
+/* Price Summary - Сумма аренды */
+.price-summary {
+  background: rgba(138, 43, 226, 0.05);
+  padding: 20px;
+  border-radius: 12px;
+  margin: 24px 0;
+  border: 1px solid rgba(138, 43, 226, 0.1);
+}
+
+.price-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.price-item:last-child {
+  border-bottom: none;
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--accent-primary);
+  padding-top: 15px;
+  margin-top: 5px;
+}
+
+.price-label {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.price-value {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.price-item:last-child .price-value {
+  font-size: 20px;
+  color: var(--accent-primary);
+}
+
+/* Form Actions - Действия формы */
+.rent-modal .form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 30px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Кнопка "Отмена" в модальном окне аренды */
+.rent-modal .form-actions .btn-secondary {
+  padding: 12px 24px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  min-width: 120px;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  line-height: 1.5;
+  backdrop-filter: blur(10px);
+}
+
+.rent-modal .form-actions .btn-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
+  border-color: rgba(138, 43, 226, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.rent-modal .form-actions .btn-secondary:active {
+  transform: translateY(0);
+}
+
+/* Кнопка "Сохранить/Арендовать" в модальном окне аренды */
+.rent-modal .form-actions .btn-primary {
+  padding: 12px 24px;
+  min-width: 140px;
+  background: linear-gradient(135deg, 
+    var(--accent-primary) 0%, 
+    var(--accent-secondary) 100%);
+  color: white;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  line-height: 1.5;
+  box-shadow: 0 4px 12px rgba(138, 43, 226, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.rent-modal .form-actions .btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.15), 
+    transparent);
+  transition: left 0.6s ease;
+}
+
+.rent-modal .form-actions .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(138, 43, 226, 0.5);
+}
+
+.rent-modal .form-actions .btn-primary:hover::before {
+  left: 100%;
+}
+
+.rent-modal .form-actions .btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(138, 43, 226, 0.3);
+}
+
+.rent-modal .form-actions .btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.rent-modal .form-actions .btn-primary::after {
+  content: '🚗';
+  font-size: 16px;
+}
+
+/* Responsive Design - Адаптивность */
+@media (max-width: 768px) {
+  .rent-modal {
+    width: 95%;
+    max-width: 95%;
+  }
+  
+  .vehicle-info-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .vehicle-info-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  
+  .vehicle-info-label {
+    min-width: auto;
+  }
+  
+  .rent-modal .form-actions {
+    flex-direction: column;
+  }
+  
+  .rent-modal .form-actions .btn-secondary,
+  .rent-modal .form-actions .btn-primary {
+    width: 100%;
+    min-width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .rent-modal .modal-content {
+    margin: 10px;
+  }
+  
+  .vehicle-info {
+    padding: 15px;
+  }
+  
+  .vehicle-info-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+  
+  .vehicle-title {
+    font-size: 18px;
+  }
+  
+  .price-item:last-child .price-value {
+    font-size: 18px;
+  }
+  
+  .rent-modal .form-group input[type="number"],
+  .rent-modal .form-group input[type="date"],
+  .rent-modal .form-group input[type="text"],
+  .rent-modal .form-group select {
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+}

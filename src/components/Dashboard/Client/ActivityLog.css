@@ -1,0 +1,102 @@
+.activity-log {
+  /* Удаляем fixed позиционирование */
+  position: relative; /* или static, или оставить по умолчанию */
+  /* Удаляем эти свойства: */
+  /* position: fixed; */
+  /* bottom: 0; */
+  /* left: 0; */
+  /* right: 0; */
+  /* z-index: 100; */
+  
+  background: var(--bg-card);
+  border-top: 2px solid var(--accent-primary);
+  max-height: 200px;
+  overflow-y: auto;
+  margin-top: 20px; /* Добавляем отступ сверху */
+  border-radius: 8px; /* Добавляем скругления */
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.2), /* Изменяем тень снизу */
+    0 0 0 1px rgba(138, 43, 226, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.activity-log h3 {
+  margin: 0;
+  padding: 15px 20px;
+  background: linear-gradient(135deg, 
+    var(--accent-primary) 0%, 
+    var(--accent-secondary) 100%);
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  /* Удаляем sticky: */
+  /* position: sticky; */
+  /* top: 0; */
+  /* z-index: 1; */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 8px 8px 0 0; /* Скругляем верхние углы */
+}
+
+.activity-list {
+  padding: 10px 20px;
+}
+
+.activity-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease;
+}
+
+.activity-item:hover {
+  background-color: rgba(138, 43, 226, 0.05);
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-left: -10px;
+  margin-right: -10px;
+  border-radius: 6px;
+}
+
+.activity-item:last-child {
+  border-bottom: none;
+}
+
+.activity-description {
+  flex: 1;
+  color: var(--text-primary);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.activity-date {
+  color: var(--text-secondary);
+  font-size: 12px;
+  margin-left: 20px;
+  opacity: 0.8;
+  white-space: nowrap;
+}
+
+/* Стилизация скроллбара для Activity Log */
+.activity-log::-webkit-scrollbar {
+  width: 6px;
+}
+
+.activity-log::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+
+.activity-log::-webkit-scrollbar-thumb {
+  background: rgba(138, 43, 226, 0.5);
+  border-radius: 3px;
+}
+
+.activity-log::-webkit-scrollbar-thumb:hover {
+  background: rgba(138, 43, 226, 0.7);
+}
