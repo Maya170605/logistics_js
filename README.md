@@ -1,6 +1,6 @@
 # Curs4 Frontend
 
-React приложение для работы с бэкендом Curs4.
+React приложение для работы с бэкендом Curs42(logistics_java).
 
 ## Установка
 
