@@ -162,6 +162,11 @@ const Register = () => {
           <button type="submit" className="btn-primary" disabled={loading}>
             {loading ? 'Регистрация...' : 'Зарегистрироваться'}
           </button>
+          <div className="auth-buttons">
+                      <Link to="/homepage" className="btn-register">
+                        Назад
+                       </Link>
+                    </div>
         </form>
         <div className="auth-link">
           Уже есть аккаунт? <Link to="/login">Войти</Link>

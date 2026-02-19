@@ -4,8 +4,13 @@ import DeclarationForm from '../Client/DeclarationForm';
 import AdminDeclarationList from './AdminDeclarationList';
 import '../Client/Section.css';
 
-const AdminDeclarationsSection = ({ declarations, onUpdate }) => {
+const AdminDeclarationsSection = ({ declarations, onUpdate, onActivity }) => {
   const [allUsers, setAllUsers] = useState([]);
+  const [showForm, setShowForm] = useState(false);
+  const [editingDeclaration, setEditingDeclaration] = useState(null);
+  const [viewingDeclaration, setViewingDeclaration] = useState(null);
+  const [selectedClientId, setSelectedClientId] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     loadUsers();
@@ -19,10 +24,6 @@ const AdminDeclarationsSection = ({ declarations, onUpdate }) => {
       console.error('Ошибка загрузки пользователей:', error);
     }
   };
-  const [showForm, setShowForm] = useState(false);
-  const [editingDeclaration, setEditingDeclaration] = useState(null);
-  const [viewingDeclaration, setViewingDeclaration] = useState(null);
-  const [selectedClientId, setSelectedClientId] = useState(null);
 
   const handleAdd = () => {
     setEditingDeclaration(null);
@@ -51,59 +52,205 @@ const AdminDeclarationsSection = ({ declarations, onUpdate }) => {
 
   const handleSave = async (declarationData) => {
     try {
+      setLoading(true);
+      
       if (editingDeclaration) {
         await declarationAPI.update(editingDeclaration.id, declarationData);
+        
+        // Вызываем onActivity для логирования
+        if (onActivity && typeof onActivity === 'function') {
+          const message = `Обновил декларацию #${editingDeclaration.declarationNumber}`;
+          console.log('📝 Вызываю onActivity:', message);
+          try {
+            await onActivity(message);
+          } catch (activityError) {
+            console.error('Ошибка при записи активности:', activityError);
+          }
+        }
       } else {
-        await declarationAPI.create(declarationData);
+        const response = await declarationAPI.create(declarationData);
+        
+        // Вызываем onActivity для логирования
+        if (onActivity && typeof onActivity === 'function') {
+          let message = `Создал новую декларацию`;
+          if (response.data?.declarationNumber) {
+            message += ` #${response.data.declarationNumber}`;
+          }
+          console.log('📝 Вызываю onActivity:', message);
+          try {
+            await onActivity(message);
+          } catch (activityError) {
+            console.error('Ошибка при записи активности:', activityError);
+          }
+        }
       }
+      
       onUpdate();
       handleCloseForm();
     } catch (error) {
       console.error('Ошибка сохранения декларации:', error);
       alert('Ошибка сохранения декларации');
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleDelete = async (id) => {
     if (window.confirm('Вы уверены, что хотите удалить эту декларацию?')) {
       try {
+        setLoading(true);
+        
+        // Найдем декларацию перед удалением для логирования
+        const declarationToDelete = declarations.find(d => d.id === id);
+        
+        if (!declarationToDelete) {
+          alert('Декларация не найдена');
+          return;
+        }
+        
         await declarationAPI.delete(id);
+        
+        // Вызываем onActivity для логирования
+        if (onActivity && typeof onActivity === 'function') {
+          const message = `Удалил декларацию #${declarationToDelete.declarationNumber}`;
+          console.log('📝 Вызываю onActivity:', message);
+          try {
+            await onActivity(message);
+          } catch (activityError) {
+            console.error('Ошибка при записи активности:', activityError);
+          }
+        }
+        
         onUpdate();
       } catch (error) {
         console.error('Ошибка удаления декларации:', error);
         alert('Ошибка удаления декларации');
+      } finally {
+        setLoading(false);
       }
     }
   };
 
   const handleApprove = async (id) => {
     try {
+      setLoading(true);
+      
+      // Найдем декларацию перед одобрением для логирования
+      const declaration = declarations.find(d => d.id === id);
+      
+      if (!declaration) {
+        alert('Декларация не найдена');
+        return;
+      }
+      
       await declarationAPI.updateStatus(id, 'APPROVED');
+      
+      // Вызываем onActivity для логирования
+      if (onActivity && typeof onActivity === 'function') {
+        const message = `Одобрил декларацию #${declaration.declarationNumber}`;
+        console.log('📝 Вызываю onActivity:', message);
+        try {
+          await onActivity(message);
+        } catch (activityError) {
+          console.error('Ошибка при записи активности:', activityError);
+        }
+      }
+      
       onUpdate();
     } catch (error) {
       console.error('Ошибка одобрения декларации:', error);
       alert('Ошибка одобрения декларации');
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleReject = async (id) => {
     try {
+      setLoading(true);
+      
+      // Найдем декларацию перед отклонением для логирования
+      const declaration = declarations.find(d => d.id === id);
+      
+      if (!declaration) {
+        alert('Декларация не найдена');
+        return;
+      }
+      
       await declarationAPI.updateStatus(id, 'REJECTED');
+      
+      // Вызываем onActivity для логирования
+      if (onActivity && typeof onActivity === 'function') {
+        const message = `Отклонил декларацию #${declaration.declarationNumber}`;
+        console.log('📝 Вызываю onActivity:', message);
+        try {
+          await onActivity(message);
+        } catch (activityError) {
+          console.error('Ошибка при записи активности:', activityError);
+        }
+      }
+      
       onUpdate();
     } catch (error) {
       console.error('Ошибка отклонения декларации:', error);
       alert('Ошибка отклонения декларации');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleStatusChange = async (id, newStatus) => {
+    try {
+      setLoading(true);
+      
+      const declaration = declarations.find(d => d.id === id);
+      
+      if (!declaration) {
+        alert('Декларация не найдена');
+        return;
+      }
+      
+      await declarationAPI.updateStatus(id, newStatus);
+      
+      // Вызываем onActivity для логирования
+      if (onActivity && typeof onActivity === 'function') {
+        const message = `Изменил статус декларации #${declaration.declarationNumber} на "${newStatus}"`;
+        console.log('📝 Вызываю onActivity:', message);
+        try {
+          await onActivity(message);
+        } catch (activityError) {
+          console.error('Ошибка при записи активности:', activityError);
+        }
+      }
+      
+      onUpdate();
+    } catch (error) {
+      console.error('Ошибка изменения статуса декларации:', error);
+      alert('Ошибка изменения статуса декларации');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="section">
       <div className="section-header">
-        <h2>Декларации</h2>
-        <button onClick={handleAdd} className="btn-primary">
-          Добавить декларацию
-        </button>
+        <h2>Декларации ({declarations.length})</h2>
+        <div className="section-actions">
+          <button onClick={handleAdd} className="btn-primary" disabled={loading}>
+            {loading ? 'Загрузка...' : 'Добавить декларацию'}
+          </button>
+          
+          
+        </div>
       </div>
+
+      {loading && (
+        <div className="loading-overlay">
+          <div className="spinner"></div>
+          <p>Обработка...</p>
+        </div>
+      )}
 
       {showForm && (
         <DeclarationForm
@@ -113,22 +260,8 @@ const AdminDeclarationsSection = ({ declarations, onUpdate }) => {
           onCancel={handleCloseForm}
           isAdmin={true}
           allUsers={allUsers}
-          onApprove={async (id) => {
-            await handleApprove(id);
-            onUpdate();
-            // Обновляем редактируемую декларацию с новым статусом
-            if (editingDeclaration && editingDeclaration.id === id) {
-              setEditingDeclaration({ ...editingDeclaration, status: 'APPROVED' });
-            }
-          }}
-          onReject={async (id) => {
-            await handleReject(id);
-            onUpdate();
-            // Обновляем редактируемую декларацию с новым статусом
-            if (editingDeclaration && editingDeclaration.id === id) {
-              setEditingDeclaration({ ...editingDeclaration, status: 'REJECTED' });
-            }
-          }}
+          onApprove={handleApprove}
+          onReject={handleReject}
         />
       )}
 
@@ -174,6 +307,7 @@ const AdminDeclarationsSection = ({ declarations, onUpdate }) => {
                     }}
                     className="btn-approve"
                     style={{ flex: 1 }}
+                    disabled={loading}
                   >
                     ✓ Одобрить декларацию
                   </button>
@@ -184,11 +318,17 @@ const AdminDeclarationsSection = ({ declarations, onUpdate }) => {
                     }}
                     className="btn-reject"
                     style={{ flex: 1 }}
+                    disabled={loading}
                   >
                     ✗ Отклонить декларацию
                   </button>
                 </div>
               )}
+            </div>
+            <div className="modal-footer">
+              <button onClick={handleCloseView} className="btn-secondary">
+                Закрыть
+              </button>
             </div>
           </div>
         </div>
@@ -199,10 +339,13 @@ const AdminDeclarationsSection = ({ declarations, onUpdate }) => {
         onEdit={handleEdit}
         onView={handleView}
         onDelete={handleDelete}
+        onApprove={handleApprove}
+        onReject={handleReject}
+        onStatusChange={handleStatusChange}
+        loading={loading}
       />
     </div>
   );
 };
 
 export default AdminDeclarationsSection;
-

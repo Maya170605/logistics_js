@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { userAPI, declarationAPI, paymentAPI, vehicleAPI } from '../../services/api';
+import { userAPI, declarationAPI, paymentAPI, vehicleAPI, activityAPI } from '../../services/api';
 import AdminUsersSection from './Admin/UsersSection';
 import AdminDeclarationsSection from './Admin/DeclarationsSection';
 import AdminPaymentsSection from './Admin/PaymentsSection';
 import AdminVehiclesSection from './Admin/VehiclesSection';
+import ActivityLog from './Client/ActivityLog';
 import './Dashboard.css';
 
 const AdminDashboard = () => {
@@ -14,38 +15,105 @@ const AdminDashboard = () => {
   const [declarations, setDeclarations] = useState([]);
   const [payments, setPayments] = useState([]);
   const [vehicles, setVehicles] = useState([]);
+  const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    loadData();
-  }, []);
+  console.log('AdminDashboard mounted, user:', user);
+  console.log('Token:', localStorage.getItem('token'));
+  
+  // Тест аутентификации
+  const testAuth = async () => {
+    try {
+      const res = await activityAPI.testAuth();
+      console.log('Тест аутентификации успешен:', res.data);
+    } catch (error) {
+      console.error('Тест аутентификации провален:', error);
+    }
+  };
+  
+  testAuth();
+  loadData();
+}, []);
 
   const loadData = async () => {
     try {
       setLoading(true);
+      setError(null);
+      console.log('Starting data load...');
+      
+      // Загружаем основные данные
       const [usersRes, declarationsRes, paymentsRes, vehiclesRes] = await Promise.all([
         userAPI.getAllUsers(),
         declarationAPI.getAll(),
         paymentAPI.getAll(),
         vehicleAPI.getAll(),
       ]);
+      
+      console.log('Основные данные загружены');
       setUsers(usersRes.data);
       setDeclarations(declarationsRes.data);
       setPayments(paymentsRes.data);
       setVehicles(vehiclesRes.data);
-    } catch (error) {
-      console.error('Ошибка загрузки данных:', error);
-    } finally {
-      setLoading(false);
+      
+      // Загружаем активности - ПРАВИЛЬНЫЙ МЕТОД
+       // Загружаем активности - ИСПРАВЛЕННАЯ ВЕРСИЯ
+    try {
+      console.log('Загружаем активности для админа ID:', user.id);
+      
+      // Вариант 1: Все активности
+      // const activitiesRes = await activityAPI.getAll();
+      
+      // Вариант 2: Активности текущего пользователя (админа)
+      const activitiesRes = await activityAPI.getByUser(user.id);
+      console.log('Активности загружены:', activitiesRes.data);
+      
+      setActivities(Array.isArray(activitiesRes.data) ? activitiesRes.data : []);
+      
+    } catch (activityError) {
+      console.error('Ошибка загрузки активностей:', activityError);
+      // Фолбэк: попробуем загрузить все активности
+      try {
+        const allActivities = await activityAPI.getAll();
+        setActivities(allActivities.data || []);
+      } catch (e) {
+        console.log('Используем тестовые данные...');
+        setActivities(getMockActivities());
+      }
     }
-  };
+    
+  } catch (error) {
+    console.error('Общая ошибка загрузки данных:', error);
+    setError('Ошибка загрузки данных: ' + error.message);
+    setActivities([]);
+  } finally {
+    setLoading(false);
+  }
+};
+
+  
+  const handleAddActivity = async (description) => {
+      try {
+        await activityAPI.createForUser(user.username, description);
+        const activitiesRes = await activityAPI.getRecentByUser(user.id, 20);
+        setActivities(activitiesRes.data);
+      } catch (error) {
+        console.error('Ошибка добавления активности:', error);
+      }
+    };
 
   const handleUpdate = () => {
     loadData();
   };
 
   if (loading) {
-    return <div className="loading">Загрузка...</div>;
+    return (
+      <div className="loading">
+        <div className="spinner"></div>
+        <p>Загрузка данных администратора...</p>
+      </div>
+    );
   }
 
   return (
@@ -60,6 +128,15 @@ const AdminDashboard = () => {
           </button>
         </div>
       </header>
+
+      {error && (
+        <div className="error-message">
+          <span>{error}</span>
+          <button onClick={loadData} className="btn-retry">
+            Повторить
+          </button>
+        </div>
+      )}
 
       <div className="dashboard-content">
         <nav className="dashboard-nav">
@@ -91,20 +168,40 @@ const AdminDashboard = () => {
 
         <div className="dashboard-main">
           {activeTab === 'users' && (
-            <AdminUsersSection users={users} onUpdate={handleUpdate} />
+            <AdminUsersSection 
+              users={users} 
+              onUpdate={handleUpdate} 
+              onActivity={handleAddActivity}
+            />
           )}
           {activeTab === 'declarations' && (
             <AdminDeclarationsSection
               declarations={declarations}
               onUpdate={handleUpdate}
+              onActivity={handleAddActivity}
             />
           )}
           {activeTab === 'payments' && (
-            <AdminPaymentsSection payments={payments} onUpdate={handleUpdate} />
+            <AdminPaymentsSection 
+              payments={payments} 
+              onUpdate={handleUpdate} 
+              onActivity={handleAddActivity}
+            />
           )}
           {activeTab === 'vehicles' && (
-            <AdminVehiclesSection vehicles={vehicles} onUpdate={handleUpdate} />
+            <AdminVehiclesSection 
+              vehicles={vehicles} 
+              onUpdate={handleUpdate} 
+              onActivity={handleAddActivity}
+            />
           )}
+        </div>
+
+        
+
+        {/* ActivityLog - фиксированный снизу */}
+        <div className="activity-log-container">
+          <ActivityLog activities={activities} />
         </div>
       </div>
     </div>
@@ -112,4 +209,3 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
-

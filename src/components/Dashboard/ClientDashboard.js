@@ -74,7 +74,7 @@ const ClientDashboard = () => {
   return (
     <div className="dashboard">
       <header className="dashboard-header">
-        <h1>Панель клиента</h1>
+        <h1>Панель клиент</h1>
         <div className="header-actions">
           <span className="user-name">Привет, {user.name || user.username}!</span>
           <a href="/" className="btn-link">Главная страница</a>

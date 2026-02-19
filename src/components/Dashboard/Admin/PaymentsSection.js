@@ -4,13 +4,14 @@ import PaymentForm from '../Client/PaymentForm';
 import AdminPaymentList from './AdminPaymentList';
 import '../Client/Section.css';
 
-const AdminPaymentsSection = ({ payments, onUpdate }) => {
+const AdminPaymentsSection = ({ payments, onUpdate, onActivity }) => {
   const [allUsers, setAllUsers] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editingPayment, setEditingPayment] = useState(null);
   const [viewingPayment, setViewingPayment] = useState(null);
   const [declarations, setDeclarations] = useState([]);
   const [selectedClientId, setSelectedClientId] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     loadDeclarations();
@@ -62,49 +63,178 @@ const AdminPaymentsSection = ({ payments, onUpdate }) => {
 
   const handleSave = async (paymentData) => {
     try {
+      setLoading(true);
+      
       if (editingPayment) {
         await paymentAPI.update(editingPayment.id, paymentData);
+        
+        // Вызываем onActivity для логирования
+        if (onActivity && typeof onActivity === 'function') {
+          const message = `Обновил платеж #${editingPayment.paymentNumber}`;
+          console.log('📝 Вызываю onActivity:', message);
+          try {
+            await onActivity(message);
+          } catch (activityError) {
+            console.error('Ошибка при записи активности:', activityError);
+          }
+        }
       } else {
-        await paymentAPI.create(paymentData);
+        const response = await paymentAPI.create(paymentData);
+        
+        // Вызываем onActivity для логирования
+        if (onActivity && typeof onActivity === 'function') {
+          let message = `Создал новый платеж`;
+          if (response.data?.paymentNumber) {
+            message += ` #${response.data.paymentNumber}`;
+          }
+          if (response.data?.amount) {
+            message += ` на сумму ${response.data.amount} ${response.data.currency || 'BYN'}`;
+          }
+          console.log('📝 Вызываю onActivity:', message);
+          try {
+            await onActivity(message);
+          } catch (activityError) {
+            console.error('Ошибка при записи активности:', activityError);
+          }
+        }
       }
+      
       onUpdate();
       handleCloseForm();
     } catch (error) {
       console.error('Ошибка сохранения платежа:', error);
       alert('Ошибка сохранения платежа');
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleDelete = async (id) => {
     if (window.confirm('Вы уверены, что хотите удалить этот платеж?')) {
       try {
+        setLoading(true);
+        
+        // Найдем платеж перед удалением для логирования
+        const paymentToDelete = payments.find(p => p.id === id);
+        
+        if (!paymentToDelete) {
+          alert('Платеж не найдена');
+          return;
+        }
+        
         await paymentAPI.delete(id);
+        
+        // Вызываем onActivity для логирования
+        if (onActivity && typeof onActivity === 'function') {
+          const message = `Удалил платеж #${paymentToDelete.paymentNumber}`;
+          console.log('📝 Вызываю onActivity:', message);
+          try {
+            await onActivity(message);
+          } catch (activityError) {
+            console.error('Ошибка при записи активности:', activityError);
+          }
+        }
+        
         onUpdate();
       } catch (error) {
         console.error('Ошибка удаления платежа:', error);
         alert('Ошибка удаления платежа');
+      } finally {
+        setLoading(false);
       }
     }
   };
 
   const handleStatusChange = async (id, newStatus) => {
     try {
+      setLoading(true);
+      
+      const payment = payments.find(p => p.id === id);
+      
+      if (!payment) {
+        alert('Платеж не найден');
+        return;
+      }
+      
+      const oldStatus = payment.status;
       await paymentAPI.updateStatus(id, newStatus);
+      
+      // Вызываем onActivity для логирования
+      if (onActivity && typeof onActivity === 'function') {
+        let message = `Изменил статус платежа #${payment.paymentNumber}`;
+        message += ` с "${oldStatus}" на "${newStatus}"`;
+        if (payment.amount) {
+          message += ` (${payment.amount} ${payment.currency || 'BYN'})`;
+        }
+        console.log('📝 Вызываю onActivity:', message);
+        try {
+          await onActivity(message);
+        } catch (activityError) {
+          console.error('Ошибка при записи активности:', activityError);
+        }
+      }
+      
       onUpdate();
     } catch (error) {
       console.error('Ошибка изменения статуса платежа:', error);
       alert('Ошибка изменения статуса платежа');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleProcessPayment = async (id) => {
+    try {
+      setLoading(true);
+      
+      const payment = payments.find(p => p.id === id);
+      
+      if (!payment) {
+        alert('Платеж не найден');
+        return;
+      }
+      
+      await paymentAPI.process(id);
+      
+      // Вызываем onActivity для логирования
+      if (onActivity && typeof onActivity === 'function') {
+        const message = `Обработал платеж #${payment.paymentNumber} (${payment.amount} ${payment.currency || 'BYN'})`;
+        console.log('📝 Вызываю onActivity:', message);
+        try {
+          await onActivity(message);
+        } catch (activityError) {
+          console.error('Ошибка при записи активности:', activityError);
+        }
+      }
+      
+      onUpdate();
+    } catch (error) {
+      console.error('Ошибка обработки платежа:', error);
+      alert('Ошибка обработки платежа');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="section">
       <div className="section-header">
-        <h2>Платежи</h2>
-        <button onClick={handleAdd} className="btn-primary">
-          Добавить платеж
-        </button>
+        <h2>Платежи ({payments.length})</h2>
+        <div className="section-actions">
+          <button onClick={handleAdd} className="btn-primary" disabled={loading}>
+            {loading ? 'Загрузка...' : 'Добавить платеж'}
+          </button>
+          
+          
+        </div>
       </div>
+
+      {loading && (
+        <div className="loading-overlay">
+          <div className="spinner"></div>
+          <p>Обработка...</p>
+        </div>
+      )}
 
       {showForm && (
         <PaymentForm
@@ -115,15 +245,8 @@ const AdminPaymentsSection = ({ payments, onUpdate }) => {
           onCancel={handleCloseForm}
           isAdmin={true}
           allUsers={allUsers}
-          onStatusChange={async (id, newStatus) => {
-            await handleStatusChange(id, newStatus);
-            // Обновляем данные после изменения статуса
-            onUpdate();
-            // Обновляем редактируемый платеж с новым статусом
-            if (editingPayment && editingPayment.id === id) {
-              setEditingPayment({ ...editingPayment, status: newStatus });
-            }
-          }}
+          onStatusChange={handleStatusChange}
+          onProcess={handleProcessPayment}
         />
       )}
 
@@ -142,7 +265,7 @@ const AdminPaymentsSection = ({ payments, onUpdate }) => {
                 <strong>Клиент:</strong> {viewingPayment.clientName || viewingPayment.clientId}
               </div>
               <div className="detail-row">
-                <strong>Сумма:</strong> {viewingPayment.amount} {viewingPayment.currency}
+                <strong>Сумма:</strong> {viewingPayment.amount} {viewingPayment.currency || 'BYN'}
               </div>
               <div className="detail-row">
                 <strong>Тип:</strong> {viewingPayment.paymentType}
@@ -176,6 +299,7 @@ const AdminPaymentsSection = ({ payments, onUpdate }) => {
                       }}
                       className="btn-approve"
                       style={{ flex: 1, minWidth: '120px' }}
+                      disabled={loading}
                     >
                       ✓ Отметить как оплачено
                     </button>
@@ -186,6 +310,7 @@ const AdminPaymentsSection = ({ payments, onUpdate }) => {
                       }}
                       className="btn-reject"
                       style={{ flex: 1, minWidth: '120px' }}
+                      disabled={loading}
                     >
                       ⚠ Отметить как просрочено
                     </button>
@@ -199,6 +324,7 @@ const AdminPaymentsSection = ({ payments, onUpdate }) => {
                     }}
                     className="btn-secondary-small"
                     style={{ flex: 1, minWidth: '120px' }}
+                    disabled={loading}
                   >
                     ↻ Вернуть в ожидание
                   </button>
@@ -211,11 +337,18 @@ const AdminPaymentsSection = ({ payments, onUpdate }) => {
                     }}
                     className="btn-approve"
                     style={{ flex: 1, minWidth: '120px' }}
+                    disabled={loading}
                   >
                     ✓ Отметить как оплачено
                   </button>
                 )}
+                
               </div>
+            </div>
+            <div className="modal-footer">
+              <button onClick={handleCloseView} className="btn-secondary">
+                Закрыть
+              </button>
             </div>
           </div>
         </div>
@@ -226,10 +359,14 @@ const AdminPaymentsSection = ({ payments, onUpdate }) => {
         onEdit={handleEdit}
         onView={handleView}
         onDelete={handleDelete}
+        onStatusChange={handleStatusChange}
+        onProcess={handleProcessPayment}
+        loading={loading}
       />
+      
+      
     </div>
   );
 };
 
 export default AdminPaymentsSection;
-

@@ -2,6 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import Login from './components/Auth/Login';
+import HomePage from './components/Auth/HomePage'; // Добавьте этот импорт
+
 import Register from './components/Auth/Register';
 import ClientDashboard from './components/Dashboard/ClientDashboard';
 import AdminDashboard from './components/Dashboard/AdminDashboard';
@@ -15,6 +17,8 @@ function App() {
       <Router>
         <div className="App">
           <Routes>
+             {/* Главная страница - теперь HomePage */}
+            <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route
@@ -41,7 +45,7 @@ function App() {
                 </PrivateRoute>
               }
             />
-            <Route path="/" element={<Navigate to="/login" replace />} />
+            <Route path="*" element={<HomePage />} />
           </Routes>
         </div>
       </Router>

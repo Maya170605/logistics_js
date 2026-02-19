@@ -53,16 +53,16 @@ const VehicleForm = ({ vehicle, clientId, onSave, onCancel, isAdmin = false, all
         <form onSubmit={handleSubmit}>
           {isAdmin && (
             <div className="form-group">
-              <label>Клиент (владелец) *</label>
+              <label>Ввладелец</label>
               <select
                 name="clientId"
                 value={formData.clientId || ''}
                 onChange={handleChange}
                 required
               >
-                <option value="">Выберите клиента</option>
+                <option value="">Выберите владельца</option>
                 {allUsers
-                  .filter((u) => u.role === 'CLIENT')
+                  .filter((u) => u.role === 'ADMIN')
                   .map((user) => (
                     <option key={user.id} value={user.id}>
                       {user.name || user.username} ({user.email})
@@ -73,7 +73,7 @@ const VehicleForm = ({ vehicle, clientId, onSave, onCancel, isAdmin = false, all
           )}
 
           <div className="form-group">
-            <label>Госномер *</label>
+            <label>Госномер</label>
             <input
               type="text"
               name="licensePlate"
@@ -116,7 +116,7 @@ const VehicleForm = ({ vehicle, clientId, onSave, onCancel, isAdmin = false, all
                 onChange={handleChange}
                 min="1900"
                 max={new Date().getFullYear() + 1}
-                placeholder="2020"
+                placeholder="2010"
               />
             </div>
 

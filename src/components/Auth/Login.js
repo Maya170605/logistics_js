@@ -77,6 +77,11 @@ const Login = () => {
           <button type="submit" className="btn-primary" disabled={loading}>
             {loading ? 'Вход...' : 'Войти'}
           </button>
+          <div className="auth-buttons">
+            <Link to="/homepage" className="btn-register">
+              Назад
+             </Link>
+          </div>
         </form>
         <div className="auth-link">
           Нет аккаунта? <Link to="/register">Зарегистрироваться</Link>

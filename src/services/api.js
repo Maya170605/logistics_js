@@ -87,6 +87,9 @@ export const activityAPI = {
   create: (activityData) => api.post('/activities', activityData),
   createForUser: (username, description) =>
     api.post(`/activities/user/${username}`, { description }),
+  createForUserId: (userId, description) => // Добавьте этот метод
+    api.post(`/activities/user/id/${userId}`, { description }),
+  testAuth: () => api.get('/activities/test-auth'), // Добавьте для теста
 };
 
 // Vehicle API

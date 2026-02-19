@@ -90,6 +90,8 @@ const DeclarationForm = ({ declaration, clientId, onSave, onCancel, isAdmin = fa
               value={formData.declarationType}
               onChange={handleChange}
               required
+              placeholder="ЭК-10"
+
             />
           </div>
 
@@ -100,6 +102,7 @@ const DeclarationForm = ({ declaration, clientId, onSave, onCancel, isAdmin = fa
               name="tnvedCode"
               value={formData.tnvedCode}
               onChange={handleChange}
+              placeholder="3506910000"
             />
           </div>
 
@@ -124,6 +127,7 @@ const DeclarationForm = ({ declaration, clientId, onSave, onCancel, isAdmin = fa
                 value={formData.productValue}
                 onChange={handleChange}
                 required
+                placeholder="В BYN"
               />
             </div>
 
@@ -135,6 +139,8 @@ const DeclarationForm = ({ declaration, clientId, onSave, onCancel, isAdmin = fa
                 name="netWeight"
                 value={formData.netWeight}
                 onChange={handleChange}
+                placeholder="В тоннах"
+
               />
             </div>
 
@@ -145,6 +151,7 @@ const DeclarationForm = ({ declaration, clientId, onSave, onCancel, isAdmin = fa
                 name="quantity"
                 value={formData.quantity}
                 onChange={handleChange}
+                placeholder="В шт"
               />
             </div>
           </div>
@@ -178,6 +185,7 @@ const DeclarationForm = ({ declaration, clientId, onSave, onCancel, isAdmin = fa
               name="customsOffice"
               value={formData.customsOffice}
               onChange={handleChange}
+              placeholder="11216465 "
             />
           </div>
 
