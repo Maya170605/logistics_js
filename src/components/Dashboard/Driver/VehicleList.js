@@ -37,7 +37,7 @@ const VehicleList = ({ vehicles, activeTab, onRent, onReturn }) => {
               new Date(vehicle.rentalEndDate) > new Date();
             
             return (
-            <tr key={vehicle.id} style={isEarlyReturnPossible ? { backgroundColor: '#fff9e6' } : {}}>
+            <tr key={vehicle.id} style={isEarlyReturnPossible ? {  } : {}}>
               <td><strong>{vehicle.licensePlate}</strong></td>
               <td>{vehicle.model || 'N/A'}</td>
               <td>{vehicle.vehicleType || 'N/A'}</td>
@@ -59,7 +59,6 @@ const VehicleList = ({ vehicles, activeTab, onRent, onReturn }) => {
                           <span style={{ 
                             display: 'block', 
                             fontSize: '12px', 
-                            color: '#ff9800',
                             fontWeight: 'bold',
                             marginTop: '4px'
                           }}>
@@ -86,9 +85,8 @@ const VehicleList = ({ vehicles, activeTab, onRent, onReturn }) => {
                       {vehicle.rentalEndDate && new Date(vehicle.rentalEndDate) > new Date() ? (
                         <button
                           onClick={() => onReturn(vehicle.id)}
-                          className="btn-warning"
+                          className="btn-primary"
                           style={{
-                            background: '#ff9800',
                             color: 'white',
                             border: 'none',
                             padding: '8px 16px',

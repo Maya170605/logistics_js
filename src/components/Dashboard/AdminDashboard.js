@@ -6,11 +6,14 @@ import AdminDeclarationsSection from './Admin/DeclarationsSection';
 import AdminPaymentsSection from './Admin/PaymentsSection';
 import AdminVehiclesSection from './Admin/VehiclesSection';
 import ActivityLog from './Client/ActivityLog';
+import AdminOverviewSection from './Admin/AdminOverviewSection'; // импортируем
+
 import './Dashboard.css';
+
 
 const AdminDashboard = () => {
   const { user, logout } = useAuth();
-  const [activeTab, setActiveTab] = useState('users');
+  const [activeTab, setActiveTab] = useState('overview');
   const [users, setUsers] = useState([]);
   const [declarations, setDeclarations] = useState([]);
   const [payments, setPayments] = useState([]);
@@ -18,6 +21,11 @@ const AdminDashboard = () => {
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const handleQuickCreateUser = () => setActiveTab('users');
+  const handleQuickCreateDeclaration = () => setActiveTab('declarations');
+  const handleQuickCreatePayment = () => setActiveTab('payments');
+  const handleQuickCreateVehicle = () => setActiveTab('vehicles');
 
   useEffect(() => {
   console.log('AdminDashboard mounted, user:', user);
@@ -56,16 +64,10 @@ const AdminDashboard = () => {
       setDeclarations(declarationsRes.data);
       setPayments(paymentsRes.data);
       setVehicles(vehiclesRes.data);
-      
-      // Загружаем активности - ПРАВИЛЬНЫЙ МЕТОД
-       // Загружаем активности - ИСПРАВЛЕННАЯ ВЕРСИЯ
+
     try {
       console.log('Загружаем активности для админа ID:', user.id);
       
-      // Вариант 1: Все активности
-      // const activitiesRes = await activityAPI.getAll();
-      
-      // Вариант 2: Активности текущего пользователя (админа)
       const activitiesRes = await activityAPI.getByUser(user.id);
       console.log('Активности загружены:', activitiesRes.data);
       
@@ -141,6 +143,12 @@ const AdminDashboard = () => {
       <div className="dashboard-content">
         <nav className="dashboard-nav">
           <button
+          className={activeTab === 'overview' ? 'active' : ''}
+          onClick={() => setActiveTab('overview')}
+        >
+          Обзор
+        </button>
+        <button
             className={activeTab === 'users' ? 'active' : ''}
             onClick={() => setActiveTab('users')}
           >
@@ -167,6 +175,19 @@ const AdminDashboard = () => {
         </nav>
 
         <div className="dashboard-main">
+        {activeTab === 'overview' && (
+          <AdminOverviewSection
+            users={users}
+            declarations={declarations}
+            payments={payments}
+            vehicles={vehicles}
+            activities={activities}
+            onCreateUser={handleQuickCreateUser}
+            onCreateDeclaration={handleQuickCreateDeclaration}
+            onCreatePayment={handleQuickCreatePayment}
+            onCreateVehicle={handleQuickCreateVehicle}
+          />
+        )}
           {activeTab === 'users' && (
             <AdminUsersSection 
               users={users} 

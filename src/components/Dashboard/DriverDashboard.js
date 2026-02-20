@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { activityAPI } from '../../services/api';
+import { activityAPI, declarationAPI } from '../../services/api'; // добавили declarationAPI
 import VehiclesSection from './Driver/VehiclesSection';
+import ProfileSection from './Driver/ProfileSection'; 
+import RoutesSection from './Driver/RoutesSection'; // новый компонент
+// новый импорт
 import './Dashboard.css';
 
 const ActivityLog = ({ activities }) => {
@@ -37,7 +40,9 @@ const ActivityLog = ({ activities }) => {
 
 const DriverDashboard = () => {
   const { user, logout } = useAuth();
+  const [activeTab, setActiveTab] = useState('vehicles'); // активная вкладка
   const [activities, setActivities] = useState([]);
+  const [declarations, setDeclarations] = useState([]); // новое состояние
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -60,6 +65,13 @@ const DriverDashboard = () => {
       } catch (activityError) {
         console.error('Ошибка загрузки активностей:', activityError);
         setActivities([]);
+      }
+      try {
+        const declRes = await declarationAPI.getAll(); // или специальный эндпоинт для водителя
+        setDeclarations(declRes.data || []);
+      } catch (declError) {
+        console.error('Ошибка загрузки деклараций:', declError);
+        setDeclarations([]);
       }
       
     } catch (error) {
@@ -133,19 +145,51 @@ const DriverDashboard = () => {
       )}
 
       <div className="dashboard-content">
+        {/* Навигация */}
+        <nav className="dashboard-nav">
+          <button
+            className={activeTab === 'vehicles' ? 'active' : ''}
+            onClick={() => setActiveTab('vehicles')}
+          >
+            Машины
+          </button>
+          <button
+          className={activeTab === 'routes' ? 'active' : ''} // новая вкладка
+          onClick={() => setActiveTab('routes')}
+        >
+          Маршруты
+        </button>
+          <button
+            className={activeTab === 'profile' ? 'active' : ''}
+            onClick={() => setActiveTab('profile')}
+          >
+            Профиль
+          </button>
+        </nav>
+
         <div className="dashboard-main">
-          <VehiclesSection 
-            onActivity={handleAddActivity}
-          />
+          {activeTab === 'vehicles' && (
+            <VehiclesSection onActivity={handleAddActivity} />
+          )}
+          {activeTab === 'routes' && (
+          <RoutesSection declarations={declarations} /> // передаём декларации
+        )}
+          {activeTab === 'profile' && (
+            <ProfileSection
+              user={user}
+              onUpdate={handleUpdate}
+              onActivity={handleAddActivity}
+            />
+          )}
         </div>
       </div>
 
-      {/* ActivityLog - фиксированный снизу */}
       <div className="activity-log-container">
         <ActivityLog activities={activities} />
       </div>
     </div>
   );
 };
+
 
 export default DriverDashboard;

@@ -67,7 +67,7 @@ const DeclarationsSection = ({ declarations, clientId, onUpdate, onActivity }) =
       <div className="section-header">
         <h2>Декларации</h2>
         <button onClick={handleAdd} className="btn-primary">
-          Добавить декларацию
+          Добавить заявку
         </button>
       </div>
 

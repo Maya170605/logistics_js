@@ -1,0 +1,415 @@
+/* Client/Section.css */
+
+.overview-section {
+  width: 100%;
+  padding: 25px;
+  background: transparent; /* фон задаётся глобально, либо можно наследовать */
+  color: var(--text-primary);
+  font-family: inherit;
+}
+
+/* Заголовок секции (приветствие + кнопки) */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid rgba(138, 43, 226, 0.3);
+  position: relative;
+}
+
+.section-header::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100px;
+  height: 2px;
+  background: linear-gradient(90deg, 
+    var(--accent-primary), 
+    var(--accent-secondary));
+  border-radius: 2px;
+}
+
+.section-header h2 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 24px;
+  font-weight: 600;
+  background: linear-gradient(90deg, 
+    var(--text-primary) 0%, 
+    var(--accent-primary) 50%, 
+    var(--text-primary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Кнопки быстрых действий */
+.quick-actions {
+  display: flex;
+  gap: 15px;
+}
+
+/* Основная кнопка (градиентная) */
+.btn-primary {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, 
+    var(--accent-primary) 0%, 
+    var(--accent-secondary) 100%);
+  color: white;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  min-width: 140px;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  line-height: 1.5;
+  box-shadow: 0 4px 12px rgba(138, 43, 226, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.15), 
+    transparent);
+  transition: left 0.6s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(138, 43, 226, 0.4);
+}
+
+.btn-primary:hover::before {
+  left: 100%;
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(138, 43, 226, 0.3);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Вторичная кнопка (прозрачная с обводкой) – используем для обеих, чтобы было единообразие */
+.btn-secondary {
+  padding: 12px 24px;
+  background: transparent;
+  color: var(--accent-primary);
+  border: 2px solid var(--accent-primary);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  min-width: 140px;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  line-height: 1.5;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-secondary:hover {
+  background: rgba(138, 43, 226, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(138, 43, 226, 0.2);
+  border-color: var(--accent-secondary);
+  color: white;
+}
+
+.btn-secondary:active {
+  transform: translateY(0);
+}
+
+/* Сетка карточек статистики */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+  margin-bottom: 40px;
+}
+
+/* Карточка статистики */
+.stat-card {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  color: var(--text-primary);
+}
+
+.stat-card:hover {
+  border-color: rgba(138, 43, 226, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 25px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(138, 43, 226, 0.1);
+}
+
+.stat-card h3 {
+  color: var(--accent-primary);
+  margin: 0 0 15px 0;
+  font-size: 18px;
+  font-weight: 600;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(138, 43, 226, 0.2);
+}
+
+.stat-number {
+  font-size: 42px;
+  font-weight: bold;
+  color: var(--accent-primary);
+  line-height: 1.2;
+  margin-bottom: 15px;
+  text-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
+}
+
+.stat-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  padding: 4px 0;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.stat-label {
+  color: var(--text-secondary);
+}
+
+.stat-value {
+  color: var(--text-primary);
+  font-weight: 500;
+  background: rgba(138, 43, 226, 0.15);
+  padding: 2px 10px;
+  border-radius: 20px;
+}
+
+.total-amount {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 2px solid rgba(138, 43, 226, 0.3);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--accent-primary);
+  display: flex;
+  justify-content: space-between;
+}
+
+.total-amount span:first-child {
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+/* Блоки последних записей */
+.recent-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+}
+
+.recent-column {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.recent-column:hover {
+  border-color: rgba(138, 43, 226, 0.3);
+  box-shadow: 
+    0 8px 25px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(138, 43, 226, 0.1);
+}
+
+.recent-column h3 {
+  color: var(--accent-primary);
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  font-weight: 600;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(138, 43, 226, 0.2);
+  position: relative;
+}
+
+.recent-column h3::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+  border-radius: 2px;
+}
+
+.recent-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.recent-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background 0.2s;
+  font-size: 14px;
+}
+
+.recent-item:hover {
+  background: rgba(138, 43, 226, 0.05);
+  border-radius: 8px;
+  padding-left: 8px;
+  padding-right: 8px;
+  margin: 0 -8px;
+}
+
+.recent-item:last-child {
+  border-bottom: none;
+}
+
+.item-id {
+  font-weight: 600;
+  color: var(--accent-primary);
+  min-width: 60px;
+}
+
+.item-desc {
+  flex: 1;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-status {
+  font-size: 12px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: 500;
+  text-transform: capitalize;
+  background: rgba(138, 43, 226, 0.15);
+  color: var(--accent-primary);
+  border: 1px solid rgba(138, 43, 226, 0.3);
+  white-space: nowrap;
+}
+
+/* Специфические цвета статусов (можно расширить) */
+.status-новый, .status-pending, .status-ожидание {
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+  border-color: rgba(255, 193, 7, 0.3);
+}
+
+.status-оплачен, .status-paid, .status-одобрен, .status-подтвержден {
+  background: rgba(40, 167, 69, 0.15);
+  color: #28a745;
+  border-color: rgba(40, 167, 69, 0.3);
+}
+
+.status-отменен, .status-cancelled {
+  background: rgba(220, 53, 69, 0.15);
+  color: #dc3545;
+  border-color: rgba(220, 53, 69, 0.3);
+}
+
+.status-в пути, .status-delivering {
+  background: rgba(23, 162, 184, 0.15);
+  color: #17a2b8;
+  border-color: rgba(23, 162, 184, 0.3);
+}
+
+.status-доставлен {
+  background: rgba(40, 167, 69, 0.15);
+  color: #28a745;
+  border-color: rgba(40, 167, 69, 0.3);
+}
+
+.status-unknown {
+  background: rgba(108, 117, 125, 0.15);
+  color: #6c757d;
+  border-color: rgba(108, 117, 125, 0.3);
+}
+
+.no-data {
+  color: var(--text-secondary);
+  font-style: italic;
+  padding: 20px 0;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .section-header h2 {
+    font-size: 20px;
+  }
+
+  .quick-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .btn-primary, .btn-secondary {
+    width: 100%;
+  }
+
+  .recent-section {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .recent-item {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .item-desc {
+    width: 100%;
+    white-space: normal;
+  }
+}

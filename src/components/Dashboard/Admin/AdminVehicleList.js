@@ -26,7 +26,7 @@ const AdminVehicleList = ({ vehicles, onEdit, onView, onDelete }) => {
           {vehicles.map((vehicle) => (
             <tr 
               key={vehicle.id}
-              style={vehicle.driverId ? { backgroundColor: '#fff9e6' } : {}}
+              style={vehicle.driverId ? {  } : {}}
             >
               <td><strong>{vehicle.licensePlate}</strong></td>
               <td>{vehicle.model || 'N/A'}</td>

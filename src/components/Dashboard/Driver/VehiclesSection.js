@@ -271,23 +271,9 @@ const VehiclesSection = ({ onActivity }) => {
           100% { transform: rotate(360deg); }
         }
         
-        .btn-secondary {
-          background-color: #6c757d;
-          color: white;
-          border: none;
-          padding: 8px 16px;
-          border-radius: 4px;
-          cursor: pointer;
-        }
         
-        .btn-secondary:hover:not(:disabled) {
-          background-color: #5a6268;
-        }
         
-        .btn-secondary:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-        }
+        
       `}</style>
     </div>
   );
